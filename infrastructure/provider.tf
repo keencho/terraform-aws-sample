@@ -6,7 +6,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Project = var.project_name
+      Project = "${var.default_name}-project"
     }
   }
 }

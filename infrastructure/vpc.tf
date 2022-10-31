@@ -3,12 +3,23 @@ resource "aws_vpc" "vpc" {
   cidr_block = "172.31.0.0/16"
 
   tags = {
-    Project = var.project_name,
-    Name = "${var.default_name}_vpc"
+    Name = "${var.default_name}-vpc"
   }
 }
 
 ##########################################################
+
+resource "aws_subnet" "subnet_public" {
+  for_each = data.aws_availability_zone.all
+
+  vpc_id = aws_vpc.vpc.id
+  cidr_block = cidrsubnet(aws_vpc.vpc.cidr_block, 4, var.az_number[data.aws_availability_zone.all[each.key].name_suffix])
+  availability_zone = each.key
+
+  tags = {
+    Name = "${var.default_name}-subnet-public-${data.aws_availability_zone.all[each.key].name_suffix}"
+  }
+}
 
 # public subnet 2a
 resource "aws_subnet" "subnet_public_2a" {
@@ -17,7 +28,7 @@ resource "aws_subnet" "subnet_public_2a" {
   availability_zone = "ap-northeast-2a"
 
   tags = {
-    Name = "${var.default_name}_subnet_public_2a"
+    Name = "${var.default_name}-subnet-public-2a"
   }
 }
 
@@ -28,18 +39,30 @@ resource "aws_subnet" "subnet_public_2c" {
   availability_zone = "ap-northeast-2c"
 
   tags = {
-    Name = "${var.default_name}_subnet_public_2c"
+    Name = "${var.default_name}-subnet-public-2c"
   }
 }
 
 # private subnet 2a
+#resource "aws_subnet" "subnet_private" {
+#  for_each = data.aws_availability_zone.all
+#
+#  vpc_id = aws_vpc.vpc.id
+#  cidr_block = cidrsubnet(aws_vpc.vpc.cidr_block, 4, var.az_number[data.aws_availability_zone.all[each.key].name_suffix])
+#  availability_zone = each.key
+#
+#  tags = {
+#    Name = "${var.default_name}-subnet-private-${data.aws_availability_zone.all[each.key].name_suffix}"
+#  }
+#}
+
 resource "aws_subnet" "subnet_private_2a" {
   vpc_id = aws_vpc.vpc.id
   cidr_block = "172.31.201.0/24"
   availability_zone = "ap-northeast-2a"
 
   tags = {
-    Name = "${var.default_name}_subnet_private_2a"
+    Name = "${var.default_name}-subnet-private-2a"
   }
 }
 
@@ -50,7 +73,7 @@ resource "aws_subnet" "subnet_private_2c" {
   availability_zone = "ap-northeast-2c"
 
   tags = {
-    Name = "${var.default_name}_subnet_private_2c"
+    Name = "${var.default_name}-subnet-private-2c"
   }
 }
 
@@ -61,7 +84,7 @@ resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.vpc.id
 
   tags = {
-    Name = "${var.default_name}_igw"
+    Name = "${var.default_name}-igw"
   }
 }
 
@@ -76,7 +99,7 @@ resource "aws_eip" "ngw_eip_2a" {
   }
 
   tags = {
-    Name = "${var.default_name}_ngw_eip_2a"
+    Name = "${var.default_name}-ngw-eip-2a"
   }
 }
 
@@ -88,7 +111,7 @@ resource "aws_eip" "ngw_eip_2c" {
   }
 
   tags = {
-    Name = "${var.default_name}_ngw_eip_2c"
+    Name = "${var.default_name}-ngw-eip-2c"
   }
 }
 
@@ -99,7 +122,7 @@ resource "aws_nat_gateway" "ngw_2a" {
   subnet_id = aws_subnet.subnet_public_2a.id
 
   tags = {
-    Name = "${var.default_name}_ngw_2a"
+    Name = "${var.default_name}-ngw-2a"
   }
 }
 
@@ -108,7 +131,7 @@ resource "aws_nat_gateway" "ngw_2c" {
   subnet_id = aws_subnet.subnet_public_2c.id
 
   tags = {
-    Name = "${var.default_name}_ngw_2c"
+    Name = "${var.default_name}-ngw-2c"
   }
 }
 
@@ -124,7 +147,7 @@ resource "aws_default_route_table" "rt_public" {
   }
 
   tags = {
-    Name = "${var.default_name}_rt_public"
+    Name = "${var.default_name}-rt-public"
   }
 }
 
@@ -148,7 +171,7 @@ resource "aws_route_table" "rt_private_2a" {
   }
 
   tags = {
-    Name = "${var.default_name}_rt_private_2a"
+    Name = "${var.default_name}-rt-private-2a"
   }
 }
 
@@ -161,7 +184,7 @@ resource "aws_route_table" "rt_private_2c" {
   }
 
   tags = {
-    Name = "${var.default_name}_rt_private_2c"
+    Name = "${var.default_name}-rt-private_2c"
   }
 }
 
@@ -200,6 +223,6 @@ resource "aws_default_network_acl" "vpc_network_acl" {
   }
 
   tags = {
-    Name = "${var.default_name}_network_acl"
+    Name = "${var.default_name}-network-acl"
   }
 }
