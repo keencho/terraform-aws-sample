@@ -1,0 +1,4 @@
+.terraform*
+*.iml
+*.tfstate*
+private_config.tf
