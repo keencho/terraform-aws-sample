@@ -2,15 +2,11 @@ variable "default_name" {
   default = "keencho"
 }
 
-variable "az_number" {
+variable "az_suffix_number" {
   default = {
     a = 1
     c = 2
   }
-}
-
-variable "az_suffix" {
-  default = ["a", "c"]
 }
 
 data "aws_region" "current" {
@@ -18,7 +14,7 @@ data "aws_region" "current" {
 }
 
 data "aws_availability_zone" "all" {
-  for_each = toset([for zone in var.az_suffix : "${data.aws_region.current.name}${zone}"])
+  for_each = toset([for zone in keys(var.az_suffix_number) : "${data.aws_region.current.name}${zone}"])
 
   name = each.key
 }
