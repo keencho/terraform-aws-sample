@@ -24,6 +24,6 @@ dependencies {
 }
 
 bootBuildImage {
-	imageName = 'keencho/terraform-sample-server'
+	imageName = 'keencho-terraform-sample-server'
 	publish = false
 }

@@ -17,3 +17,7 @@
     - 172.31.(16 * (suffix_num + (suffix_count * 1))).0 / 20
   - db private 
     - 172.31.(16 * (suffix_num + (suffix_count * 2))).0 / 20
+
+### ecs task container
+- cpu: 2
+- momory: 4G
