@@ -54,36 +54,36 @@ resource "aws_security_group" "alb_sg" {
 }
 
 # application load balancer listener 80
-resource "aws_alb_listener" "alb-listener" {
+resource "aws_alb_listener" "alb_listener" {
   load_balancer_arn = aws_alb.alb.arn
   port = 80
   protocol = "HTTP"
 
   default_action {
     type = "forward"
-    target_group_arn = aws_alb_target_group.alb-target-group.arn
+    target_group_arn = aws_alb_target_group.alb_target_group.arn
   }
 }
 
 # application load balancer 80 to 443
-#resource "aws_lb_listener" "http_forward" {
-#  load_balancer_arn = aws_alb.alb.arn
-#  port              = 80
-#  protocol          = "HTTP"
-#
-#  default_action {
-#    type = "redirect"
-#
-#    redirect {
-#      port        = "443"
-#      protocol    = "HTTPS"
-#      status_code = "HTTP_301"
-#    }
-#  }
-#}
+resource "aws_lb_listener" "http_forward" {
+  load_balancer_arn = aws_alb.alb.arn
+  port              = 80
+  protocol          = "HTTP"
+
+  default_action {
+    type = "redirect"
+
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+}
 
 # application load balancer target group
-resource "aws_alb_target_group" "alb-target-group" {
+resource "aws_alb_target_group" "alb_target_group" {
   name = "${var.default_name}-alb-target-group"
   port = 80
   protocol = "HTTP"
